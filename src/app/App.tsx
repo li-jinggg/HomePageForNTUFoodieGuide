@@ -172,6 +172,7 @@ export default function App() {
   ]);
   const [chatInput, setChatInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   function sendMessage(text: string) {
     if (!text.trim()) return;
@@ -208,14 +209,8 @@ export default function App() {
           </div>
 
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            {["Discover", "Reviews", "Map", "Chatbot"].map((link) => (
-              <a
-                key={link}
-                href="#"
-                className="hover:text-foreground transition-colors duration-200"
-              >
-                {link}
-              </a>
+            {["Discover", "Reviews", "Map"].map((link) => (
+              null
             ))}
           </div>
 
@@ -223,7 +218,7 @@ export default function App() {
             <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Sign In
             </button>
-            <button className="text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity">Leave a Review</button>
+            <button className="text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity">Discover</button>
           </div>
 
           <button
@@ -241,7 +236,7 @@ export default function App() {
 
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-border bg-background px-6 py-4 flex flex-col gap-4 text-sm">
-            {["Discover", "Reviews", "Map", "Chatbot"].map((link) => (
+            {["Discover", "Reviews", "Map"].map((link) => (
               <a
                 key={link}
                 href="#"
@@ -324,7 +319,7 @@ export default function App() {
               {[
                 ["50+", "Food Stalls"],
                 ["2,400+", "Reviews"],
-                ["8", "Canteens"],
+                ["13", "Canteens"],
               ].map(([num, label]) => (
                 <div key={label}>
                   <div
@@ -343,75 +338,291 @@ export default function App() {
         </div>
       </section>
 
-      {/* ── FEATURES ─────────────────────────────────── */}
-      <section className="py-24 bg-card border-y border-border">
+      {/* ── CAMPUS MAP TEASER ────────────────────────── */}
+      <section className="py-24 bg-card border-t border-border">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
+            <p className="text-[#1B2D4F] text-xs font-bold uppercase tracking-widest mb-2">
+              Navigate Campus
+            </p>
             <h2
               className="text-3xl md:text-4xl font-bold mb-4"
               style={{ fontFamily: DISPLAY_FONT }}
-            >Everything you need to eat well on campus</h2>
-            <p className="text-muted-foreground max-w-md mx-auto text-sm leading-relaxed">— Helping every NTU student find their next great meal without the guesswork.</p>
+            >All Food Places in 1 Map</h2>
+            <p className="text-muted-foreground max-w-sm mx-auto text-sm leading-relaxed">Check what's available and plan your route in seconds.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-5">
-            {[
-              {
-                icon: <Bot className="w-6 h-6" />,
-                title: "AI Foodie Chatbot",
-                desc: "Ask anything — \"What's cheap near North Spine?\" or \"Best vegetarian options today?\" — and get instant, personalised recommendations drawn from thousands of student reviews.",
-                cta: "Chat with Foodie",
-                color: "#C41230",
-              },
-              {
-                icon: <Users className="w-6 h-6" />,
-                title: "Community Reviews",
-                desc: "Browse honest, unfiltered reviews from fellow NTU students and alumni. Filter by canteen, cuisine type, price range, or dietary preference.",
-                cta: "Browse Reviews",
-                color: "#1B2D4F",
-              },
-              {
-                icon: <Map className="w-6 h-6" />,
-                title: "Interactive Campus Map",
-                desc: "A visual map of every canteen and food stall on campus. Find exactly where to go, check opening hours, and see estimated walking times from your current location.",
-                cta: "Open the Map",
-                color: "#1B2D4F",
-              },
-            ].map((feature) => (
-              <div
-                key={feature.title}
-                className="group p-8 rounded-2xl border border-border bg-background hover:border-primary/25 transition-all duration-300"
-              >
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110"
-                  style={{
-                    backgroundColor: `${feature.color}18`,
-                    color: feature.color,
-                  }}
-                >
-                  {feature.icon}
+          <div
+            className="relative w-full rounded-3xl overflow-hidden mb-10"
+            style={{ height: '520px', boxShadow: '0 8px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)' }}
+          >
+            {/* Floating legend */}
+            <div
+              className="absolute top-4 left-4 z-10 rounded-2xl px-4 py-3.5"
+              style={{
+                background: 'rgba(255,255,255,0.97)',
+                backdropFilter: 'blur(16px)',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.10)',
+                border: '1px solid rgba(0,0,0,0.05)',
+              }}
+            >
+              <p style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.12em', color: '#8A8070', textTransform: 'uppercase', marginBottom: 10, fontFamily: 'system-ui,sans-serif' }}>
+                Map Legend
+              </p>
+              {([
+                { color: '#C41230', label: 'Canteen' },
+                { color: '#1B2D4F', label: 'Food Court' },
+                { color: '#D97706', label: 'Café' },
+              ] as const).map((item) => (
+                <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 7 }}>
+                  <svg width="13" height="18" viewBox="0 0 13 18" style={{ flexShrink: 0 }}>
+                    <path d="M 6.5,17 C 2.5,11 0,8.5 0,5.5 A 6.5,6.5 0 1,1 13,5.5 C 13,8.5 10.5,11 6.5,17 Z" fill={item.color} />
+                    <circle cx="6.5" cy="5.5" r="2.5" fill="white" />
+                  </svg>
+                  <span style={{ fontSize: 10.5, color: '#3A3530', fontFamily: 'system-ui,sans-serif', fontWeight: 500 }}>{item.label}</span>
                 </div>
-                <h3
-                  className="text-xl font-semibold mb-3"
-                  style={{ fontFamily: DISPLAY_FONT }}
-                >
-                  {feature.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-                  {feature.desc}
-                </p>
-                <button
-                  className="flex items-center gap-2 text-sm font-semibold transition-all"
-                  style={{ color: feature.color }}
-                >
-                  {feature.cta}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-                </button>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            <svg viewBox="0 0 860 520" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="fine-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <circle cx="10" cy="10" r="0.65" fill="#B8B0A0" />
+                </pattern>
+                <linearGradient id="campus-fill" x1="0" y1="0" x2="0.6" y2="1">
+                  <stop offset="0%" stopColor="#DEF0C8" />
+                  <stop offset="100%" stopColor="#D0E4B8" />
+                </linearGradient>
+                <linearGradient id="water-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#B8D8F0" />
+                  <stop offset="100%" stopColor="#A0C8E4" />
+                </linearGradient>
+                <filter id="bld-shadow" x="-20%" y="-20%" width="160%" height="160%">
+                  <feDropShadow dx="2" dy="3" stdDeviation="3" floodColor="#2A3A20" floodOpacity="0.14" />
+                </filter>
+                <filter id="tip-float" x="-30%" y="-30%" width="160%" height="180%">
+                  <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="#000" floodOpacity="0.14" />
+                </filter>
+              </defs>
+
+              {/* ── Off-campus parchment ── */}
+              <rect width="860" height="520" fill="#E8E2D8" />
+              <rect width="860" height="520" fill="url(#fine-dots)" opacity="0.8" />
+
+              {/* ── Campus ground ── */}
+              <path
+                d="M 92,168 C 118,104 182,68 182,68 L 414,38 L 624,38 C 706,50 762,96 762,96 L 814,198 L 814,370 C 798,424 742,448 742,448 L 558,486 L 278,486 C 192,486 114,428 114,428 C 76,396 62,310 62,310 Z"
+                fill="url(#campus-fill)"
+              />
+              <path
+                d="M 92,168 C 118,104 182,68 182,68 L 414,38 L 624,38 C 706,50 762,96 762,96 L 814,198 L 814,370 C 798,424 742,448 742,448 L 558,486 L 278,486 C 192,486 114,428 114,428 C 76,396 62,310 62,310 Z"
+                fill="none" stroke="#B8D098" strokeWidth="2"
+              />
+
+              {/* ── Lawn / park areas ── */}
+              <ellipse cx="318" cy="170" rx="64" ry="40" fill="#C0D8A0" opacity="0.65" />
+              <ellipse cx="538" cy="164" rx="50" ry="32" fill="#C0D8A0" opacity="0.55" />
+              <ellipse cx="324" cy="380" rx="60" ry="36" fill="#C0D8A0" opacity="0.60" />
+              <ellipse cx="578" cy="388" rx="46" ry="30" fill="#C0D8A0" opacity="0.55" />
+
+              {/* ── Water features ── */}
+              <ellipse cx="186" cy="428" rx="42" ry="24" fill="url(#water-fill)" />
+              <ellipse cx="186" cy="428" rx="36" ry="18" fill="#B8D8F0" opacity="0.55" />
+              <text x="186" y="432" fontSize="7" fill="#4A80A8" textAnchor="middle" fontFamily="system-ui,sans-serif" fontStyle="italic" fontWeight="500">Yunnan Lake</text>
+              <ellipse cx="672" cy="452" rx="28" ry="16" fill="url(#water-fill)" />
+              <ellipse cx="672" cy="452" rx="22" ry="11" fill="#B8D8F0" opacity="0.5" />
+
+              {/* ── Primary roads ── */}
+              <path d="M 62,252 L 814,252" stroke="#D8CEBC" strokeWidth="20" strokeLinecap="butt" />
+              <path d="M 62,252 L 814,252" stroke="#F0EAE0" strokeWidth="16" strokeLinecap="butt" />
+              <path d="M 440,38 L 440,486" stroke="#D8CEBC" strokeWidth="16" strokeLinecap="butt" />
+              <path d="M 440,38 L 440,486" stroke="#F0EAE0" strokeWidth="12" strokeLinecap="butt" />
+
+              {/* ── Secondary roads ── */}
+              <path d="M 278,252 Q 194,316 114,372" stroke="#E0D8C8" strokeWidth="10" fill="none" strokeLinecap="round" />
+              <path d="M 278,252 Q 194,316 114,372" stroke="#EDE6DC" strokeWidth="7" fill="none" strokeLinecap="round" />
+              <path d="M 622,252 Q 696,308 742,388" stroke="#E0D8C8" strokeWidth="10" fill="none" strokeLinecap="round" />
+              <path d="M 622,252 Q 696,308 742,388" stroke="#EDE6DC" strokeWidth="7" fill="none" strokeLinecap="round" />
+              <path d="M 182,68 Q 202,152 202,252" stroke="#E0D8C8" strokeWidth="9" fill="none" strokeLinecap="round" />
+              <path d="M 182,68 Q 202,152 202,252" stroke="#EDE6DC" strokeWidth="6" fill="none" strokeLinecap="round" />
+              <path d="M 762,96 Q 794,152 814,198" stroke="#E0D8C8" strokeWidth="9" fill="none" strokeLinecap="round" />
+              <path d="M 762,96 Q 794,152 814,198" stroke="#EDE6DC" strokeWidth="6" fill="none" strokeLinecap="round" />
+
+              {/* Road centre dashes */}
+              <path d="M 62,252 L 814,252" stroke="#C8C0AE" strokeWidth="1.2" strokeDasharray="18,14" opacity="0.7" />
+              <path d="M 440,38 L 440,486" stroke="#C8C0AE" strokeWidth="1.2" strokeDasharray="18,14" opacity="0.7" />
+
+              {/* Road labels */}
+              <text x="168" y="245" fontSize="7.5" fill="#9A9080" fontFamily="system-ui,sans-serif" fontWeight="700" letterSpacing="1.5">NANYANG AVE</text>
+              <text x="448" y="172" fontSize="7.5" fill="#9A9080" fontFamily="system-ui,sans-serif" fontWeight="700" letterSpacing="1.5" writingMode="tb">NANYANG DRIVE</text>
+
+              {/* ── Buildings ── */}
+              {/* North Spine */}
+              <rect x="372" y="90" width="138" height="72" rx="6" fill="#9AAE90" filter="url(#bld-shadow)" />
+              <rect x="380" y="98" width="122" height="56" rx="5" fill="#8EA284" />
+              <rect x="388" y="106" width="106" height="40" rx="4" fill="#849878" opacity="0.8" />
+              {/* The Hive */}
+              <rect x="356" y="210" width="120" height="96" rx="12" fill="#9AAE90" filter="url(#bld-shadow)" />
+              <rect x="364" y="218" width="104" height="80" rx="10" fill="#8EA284" />
+              <rect x="372" y="226" width="88" height="64" rx="8" fill="#849878" opacity="0.7" />
+              {/* South Spine */}
+              <rect x="374" y="338" width="132" height="68" rx="6" fill="#9AAE90" filter="url(#bld-shadow)" />
+              <rect x="382" y="346" width="116" height="52" rx="5" fill="#8EA284" />
+              {/* Pioneer */}
+              <rect x="84" y="248" width="104" height="80" rx="6" fill="#9AAE90" filter="url(#bld-shadow)" />
+              <rect x="92" y="256" width="88" height="64" rx="5" fill="#8EA284" />
+              {/* Foodgle Hub */}
+              <rect x="620" y="228" width="112" height="80" rx="6" fill="#9AAE90" filter="url(#bld-shadow)" />
+              <rect x="628" y="236" width="96" height="64" rx="5" fill="#8EA284" />
+              {/* WKWSCI */}
+              <rect x="614" y="96" width="100" height="70" rx="6" fill="#9AAE90" filter="url(#bld-shadow)" />
+              <rect x="622" y="104" width="84" height="54" rx="5" fill="#8EA284" />
+              {/* North Hill */}
+              <rect x="168" y="82" width="94" height="66" rx="6" fill="#9AAE90" filter="url(#bld-shadow)" />
+              <rect x="176" y="90" width="78" height="50" rx="5" fill="#8EA284" />
+              {/* Canteen 2 */}
+              <rect x="256" y="174" width="98" height="62" rx="6" fill="#9AAE90" filter="url(#bld-shadow)" />
+              <rect x="264" y="182" width="82" height="46" rx="5" fill="#8EA284" />
+              {/* Halls (cooler, muted) */}
+              <rect x="114" y="360" width="64" height="56" rx="5" fill="#A8B4C0" opacity="0.60" />
+              <rect x="186" y="386" width="58" height="48" rx="5" fill="#A8B4C0" opacity="0.60" />
+              <rect x="630" y="364" width="62" height="56" rx="5" fill="#A8B4C0" opacity="0.60" />
+              <rect x="696" y="386" width="56" height="50" rx="5" fill="#A8B4C0" opacity="0.60" />
+              <rect x="282" y="416" width="56" height="44" rx="5" fill="#A8B4C0" opacity="0.55" />
+              <rect x="504" y="418" width="56" height="44" rx="5" fill="#A8B4C0" opacity="0.55" />
+
+              {/* Building micro-labels */}
+              <text x="441" y="136" fontSize="7" fill="#3A4E34" textAnchor="middle" fontFamily="system-ui,sans-serif" fontWeight="800" letterSpacing="0.8" opacity="0.8">NORTH SPINE</text>
+              <text x="416" y="262" fontSize="7" fill="#3A4E34" textAnchor="middle" fontFamily="system-ui,sans-serif" fontWeight="800" letterSpacing="0.8" opacity="0.8">THE HIVE</text>
+              <text x="440" y="378" fontSize="7" fill="#3A4E34" textAnchor="middle" fontFamily="system-ui,sans-serif" fontWeight="800" letterSpacing="0.8" opacity="0.8">SOUTH SPINE</text>
+
+              {/* ── Trees ── */}
+              {([
+                [314,152,15],[494,152,13],[296,394,14],[600,152,12],[214,316,13],
+                [662,314,13],[502,90,12],[356,426,13],[250,198,12],[732,184,13],
+                [404,462,12],[144,194,11],[526,460,12],[664,464,11],[584,462,11],
+                [100,358,11],[744,358,12],[492,338,11],[332,336,11],[202,158,12],
+                [680,152,11],[136,302,10],[750,288,10],[348,466,10],
+              ] as const).map(([cx, cy, r], i) => (
+                <g key={i}>
+                  <circle cx={cx} cy={cy + 2} r={r + 1} fill="#5A8040" opacity="0.18" />
+                  <circle cx={cx} cy={cy} r={r + 1} fill="#88C060" opacity="0.55" />
+                  <circle cx={cx} cy={cy} r={r - 1} fill="#78B050" opacity="0.80" />
+                  <circle cx={cx} cy={cy} r={r - 5} fill="#68A040" opacity="0.90" />
+                </g>
+              ))}
+
+              {/* ── Campus gate ── */}
+              <g transform="translate(820,236)">
+                <rect x="0" y="0" width="7" height="32" rx="2" fill="#88806E" />
+                <rect x="14" y="0" width="7" height="32" rx="2" fill="#88806E" />
+                <rect x="-2" y="-7" width="25" height="7" rx="2" fill="#78705E" />
+                <line x1="3.5" y1="0" x2="3.5" y2="32" stroke="#9E9484" strokeWidth="0.5" strokeDasharray="3,3" />
+                <line x1="17.5" y1="0" x2="17.5" y2="32" stroke="#9E9484" strokeWidth="0.5" strokeDasharray="3,3" />
+              </g>
+              <text x="829" y="224" fontSize="7" fill="#78706A" fontFamily="system-ui,sans-serif" textAnchor="middle" fontWeight="700" letterSpacing="0.5">MAIN GATE</text>
+
+              {/* ── Food pins (teardrop) ── */}
+              {([
+                { x: 440, y: 98,  n1: "North Spine Food Court", sub: "Canteen · 18 stalls",    color: "#C41230", tipRight: true  },
+                { x: 215, y: 94,  n1: "North Hill Food Court",  sub: "Canteen · 12 stalls",    color: "#C41230", tipRight: true  },
+                { x: 416, y: 248, n1: "Koufu @ The Hive",       sub: "Food Court · 10 stalls", color: "#1B2D4F", tipRight: false },
+                { x: 440, y: 356, n1: "South Spine Food Court", sub: "Canteen · 14 stalls",    color: "#C41230", tipRight: false },
+                { x: 136, y: 272, n1: "Pioneer Canteen",        sub: "Canteen · 22 stalls",    color: "#C41230", tipRight: true  },
+                { x: 676, y: 262, n1: "Foodgle Hub",            sub: "Food Court · 16 stalls", color: "#1B2D4F", tipRight: false },
+                { x: 548, y: 208, n1: "The Quad Café",          sub: "Café · 4 outlets",       color: "#D97706", tipRight: true  },
+                { x: 664, y: 116, n1: "WKWSCI Canteen",        sub: "Canteen · 8 stalls",     color: "#C41230", tipRight: false },
+                { x: 306, y: 196, n1: "Canteen 2",              sub: "Canteen · 10 stalls",    color: "#C41230", tipRight: true  },
+                { x: 566, y: 392, n1: "Campus Creamery",        sub: "Café · 3 outlets",       color: "#D97706", tipRight: false },
+              ] as const).map((pin, i) => {
+                const tipX = pin.tipRight ? pin.x + 24 : pin.x - 176;
+                const tipY = pin.y < 118 ? pin.y + 10 : pin.y - 80;
+                return (
+                  <g key={i} className="group cursor-pointer">
+                    {/* Pin shadow */}
+                    <g transform={`translate(${pin.x}, ${pin.y - 4})`}>
+                      <path
+                        d="M 0,8 C -6,-2 -17,-12 -17,-22 A 17,17 0 1,1 17,-22 C 17,-12 6,-2 0,8 Z"
+                        fill="rgba(0,0,0,0.20)"
+                        transform="translate(0,5) scale(1,0.4)"
+                      />
+                    </g>
+                    {/* Teardrop pin */}
+                    <g transform={`translate(${pin.x}, ${pin.y - 4})`}>
+                      <path
+                        d="M 0,8 C -6,-2 -17,-12 -17,-22 A 17,17 0 1,1 17,-22 C 17,-12 6,-2 0,8 Z"
+                        fill={pin.color}
+                        stroke="white"
+                        strokeWidth="2.5"
+                        strokeLinejoin="round"
+                      />
+                      <circle cx="0" cy="-22" r="7" fill="white" />
+                      <circle cx="0" cy="-22" r="3.5" fill={pin.color} />
+                    </g>
+                    {/* Tooltip */}
+                    <g
+                      transform={`translate(${tipX},${tipY})`}
+                      className="opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none"
+                      filter="url(#tip-float)"
+                    >
+                      {/* Shadow offset */}
+                      <rect x="2" y="2" width="164" height="58" rx="12" fill="rgba(0,0,0,0.08)" />
+                      {/* Card */}
+                      <rect x="0" y="0" width="164" height="58" rx="12" fill="white" />
+                      {/* Colored header */}
+                      <rect x="0" y="0" width="164" height="26" rx="12" fill={pin.color} />
+                      <rect x="0" y="16" width="164" height="10" fill={pin.color} />
+                      <text x="12" y="17" fontSize="10" fontWeight="700" fill="white" fontFamily="system-ui,sans-serif">{pin.n1}</text>
+                      {/* Body */}
+                      <text x="12" y="44" fontSize="9" fill="#5A5550" fontFamily="system-ui,sans-serif">{pin.sub}</text>
+                    </g>
+                  </g>
+                );
+              })}
+
+              {/* ── Compass ── */}
+              <g transform="translate(50,66)">
+                <circle cx="0" cy="0" r="28" fill="white" fillOpacity="0.95" />
+                <circle cx="0" cy="0" r="28" stroke="#D8D0C4" strokeWidth="1" fill="none" />
+                <circle cx="0" cy="0" r="4" fill="#C41230" />
+                {/* N needle */}
+                <path d="M 0,0 L -5,-22 L 0,-26 L 5,-22 Z" fill="#C41230" />
+                {/* S needle */}
+                <path d="M 0,0 L -4,20 L 0,24 L 4,20 Z" fill="#B0A898" />
+                {/* E/W ticks */}
+                <path d="M 22,0 L 28,0" stroke="#B0A898" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M -28,0 L -22,0" stroke="#B0A898" strokeWidth="1.5" strokeLinecap="round" />
+                <text x="0" y="-30" fontSize="8" fontWeight="800" fill="#C41230" fontFamily="system-ui,sans-serif" textAnchor="middle">N</text>
+                <text x="0" y="40" fontSize="7.5" fill="#9A9080" fontFamily="system-ui,sans-serif" textAnchor="middle">S</text>
+                <text x="34" y="3" fontSize="7.5" fill="#9A9080" fontFamily="system-ui,sans-serif">E</text>
+                <text x="-38" y="3" fontSize="7.5" fill="#9A9080" fontFamily="system-ui,sans-serif">W</text>
+              </g>
+
+              {/* ── Scale bar ── */}
+              <g transform="translate(686,492)">
+                <rect x="0" y="0" width="40" height="4" rx="1" fill="#8A8070" />
+                <rect x="40" y="0" width="40" height="4" rx="1" fill="#C8C0B0" />
+                <rect x="0" y="-1" width="80" height="6" rx="1" fill="none" stroke="#8A8070" strokeWidth="1" />
+                <text x="0" y="-5" fontSize="7.5" fill="#8A8070" fontFamily="system-ui,sans-serif" textAnchor="middle">0</text>
+                <text x="40" y="-5" fontSize="7.5" fill="#8A8070" fontFamily="system-ui,sans-serif" textAnchor="middle">250m</text>
+                <text x="80" y="-5" fontSize="7.5" fill="#8A8070" fontFamily="system-ui,sans-serif" textAnchor="middle">500m</text>
+              </g>
+
+              {/* ── Campus label ── */}
+              <text x="430" y="514" fontSize="9.5" fill="#9A9080" textAnchor="middle" fontFamily="system-ui,sans-serif" fontStyle="italic" letterSpacing="0.5">
+                Nanyang Technological University · Singapore
+              </text>
+            </svg>
+          </div>
+
+          <div className="text-center">
+            
           </div>
         </div>
       </section>
+
+      {/* ── FEATURES ─────────────────────────────────── */}
+      
 
       {/* ── TRENDING STALLS ───────────────────────────── */}
       <section className="py-24">
@@ -569,61 +780,37 @@ export default function App() {
         </div>
       </section>
 
-      {/* ── CHATBOT DEMO ─────────────────────────────── */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div>
-            <p className="text-primary text-xs font-bold uppercase tracking-widest mb-4">
-              Meet Foodie
-            </p>
-            <h2
-              className="text-3xl md:text-4xl font-bold mb-6 leading-tight"
-              style={{ fontFamily: DISPLAY_FONT }}
-            >
-              Your AI campus
-              <span className="italic block">food companion</span>
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6 text-sm">
-              Don't know what to eat? Just ask Foodie. Whether you're hunting
-              for something cheap before a 9am lecture, craving mala on a
-              Friday, or need halal options near Hall 14 — Foodie has you covered.
-            </p>
-            <ul className="space-y-3">
-              {[
-                "Recommends stalls based on your budget and location",
-                "Knows opening hours for all 8 canteens",
-                "Understands dietary needs — halal, vegetarian, vegan",
-                "Powered by 2,400+ real student reviews",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <span className="w-4 h-4 rounded-full bg-primary/15 flex-shrink-0 flex items-center justify-center mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Interactive chat widget */}
-          <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-2xl">
-            {/* Chat header */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-border">
-              <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                <Bot className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <div>
-                <div className="text-sm font-semibold">Foodie</div>
-                <div className="text-xs text-[#4CAF50] flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#4CAF50] inline-block" />
-                  Online
+      {/* ── FLOATING CHAT WIDGET ─────────────────────── */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        {/* Chat popover */}
+        {chatOpen && (
+          <div className="w-[360px] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-card">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                  <Bot className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-foreground">Foodie</div>
+                  <div className="text-xs text-[#4CAF50] flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#4CAF50] inline-block" />
+                    Online
+                  </div>
                 </div>
               </div>
+              <button
+                onClick={() => setChatOpen(false)}
+                className="text-muted-foreground hover:text-foreground transition-colors p-1"
+                aria-label="Close chat"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
             {/* Messages */}
             <div
-              className="p-4 h-64 overflow-y-auto flex flex-col gap-3"
+              className="p-4 h-72 overflow-y-auto flex flex-col gap-3 bg-background"
               style={{ scrollbarWidth: "none" }}
             >
               {chatMessages.map((msg, i) => (
@@ -635,7 +822,7 @@ export default function App() {
                     className={`max-w-[82%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                       msg.role === "user"
                         ? "bg-primary text-primary-foreground rounded-br-sm"
-                        : "bg-background border border-border text-foreground rounded-bl-sm"
+                        : "bg-card border border-border text-foreground rounded-bl-sm"
                     }`}
                   >
                     {msg.text}
@@ -644,7 +831,7 @@ export default function App() {
               ))}
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="px-4 py-3 rounded-2xl bg-background border border-border rounded-bl-sm">
+                  <div className="px-4 py-3 rounded-2xl bg-card border border-border rounded-bl-sm">
                     <div className="flex gap-1 items-center">
                       {[0, 1, 2].map((i) => (
                         <div
@@ -660,7 +847,7 @@ export default function App() {
             </div>
 
             {/* Suggested + input */}
-            <div className="px-4 pt-2 pb-4 border-t border-border">
+            <div className="px-4 pt-2 pb-4 border-t border-border bg-card">
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {SUGGESTED_QUESTIONS.map((q) => (
                   <button
@@ -690,91 +877,25 @@ export default function App() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        )}
 
-      {/* ── CAMPUS MAP TEASER ────────────────────────── */}
-      <section className="py-24 bg-card border-t border-border">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <p className="text-[#1B2D4F] text-xs font-bold uppercase tracking-widest mb-2">
-              Navigate Campus
-            </p>
-            <h2
-              className="text-3xl md:text-4xl font-bold mb-4"
-              style={{ fontFamily: DISPLAY_FONT }}
-            >
-              All 8 canteens, one map
-            </h2>
-            <p className="text-muted-foreground max-w-sm mx-auto text-sm leading-relaxed">
-              Don't wander hungry. Find the nearest canteen, check what's
-              available, and plan your route in seconds.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-            {CANTEENS.map((c) => (
-              <div
-                key={c.name}
-                className="group flex items-center gap-4 p-4 rounded-xl border border-border bg-background hover:border-primary/30 transition-all duration-200 cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-4 h-4 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{c.name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {c.stalls} stalls · {c.distance}
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity">
-              <Map className="w-4 h-4" />
-              Open Interactive Map
-            </button>
-          </div>
-        </div>
-      </section>
+        {/* Toggle button */}
+        <button
+          onClick={() => setChatOpen((o) => !o)}
+          className="flex items-center gap-2.5 px-5 py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm shadow-lg hover:opacity-90 transition-opacity"
+          aria-label="Open Foodie chatbot"
+        >
+          {chatOpen ? (
+            <X className="w-4 h-4" />
+          ) : (
+            <Bot className="w-4 h-4" />
+          )}
+          {!chatOpen && "Ask Foodie"}
+        </button>
+      </div>
 
       {/* ── CTA BANNER ───────────────────────────────── */}
-      <section className="py-28 relative overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-muted"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1681038560284-58214f7ea0ac?w=1600&h=600&fit=crop&auto=format')",
-          }}
-        />
-        <div className="absolute inset-0 bg-[#0D1B2A]/90" />
-        <div className="relative z-10 max-w-2xl mx-auto px-6 text-center">
-          <h2
-            className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-white"
-            style={{ fontFamily: DISPLAY_FONT }}
-          >
-            Tried something great?
-            <span className="block text-[#E8485A] italic">
-              Tell everyone about it.
-            </span>
-          </h2>
-          <p className="text-white/65 mb-8 leading-relaxed">
-            Every review helps a fellow NTU student find their next favourite
-            meal. Join 5,000+ students already shaping the guide.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button className="px-8 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity">
-              Write a Review
-            </button>
-            <button className="px-8 py-3.5 rounded-xl border border-white/20 text-white font-semibold hover:border-white/40 transition-colors">
-              Browse Stalls
-            </button>
-          </div>
-        </div>
-      </section>
+      
 
       {/* ── FOOTER ───────────────────────────────────── */}
       <footer className="border-t border-border py-10">
@@ -790,9 +911,7 @@ export default function App() {
               NTU Foodie Guide
             </span>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Made with 🍜 by NTU students, for NTU students.
-          </p>
+          <p className="text-xs text-muted-foreground">Made by NTU students, for NTU students.</p>
           <div className="flex gap-6 text-xs text-muted-foreground">
             {["About", "Contribute", "Privacy"].map((l) => (
               <a
